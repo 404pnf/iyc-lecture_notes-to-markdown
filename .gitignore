@@ -4,3 +4,4 @@
 *.xml
 *.md
 text/*
+reverse-markdown/*
