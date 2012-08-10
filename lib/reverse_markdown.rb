@@ -93,8 +93,7 @@ class ReverseMarkdown
       when :h1
         "# "
       when :li
-#        parent.eql?(:ul) ? " - " : " "+(@li_counter+=1).to_s+". "
-        parent.eql?(:ul) ? " - " : " " + "1. "
+        parent.eql?(:ul) ? " - " : " "+(@li_counter+=1).to_s+". "
       when :ol
         @li_counter = 0
         ""
@@ -150,7 +149,6 @@ class ReverseMarkdown
       when :a
         @links << type.attribute('href').to_s
         "][" + @links.size.to_s + "] "
-
       when :img
         @links << type.attribute('src').to_s
         "" + type.attribute('alt').to_s + "][" + @links.size.to_s + "] "
@@ -187,8 +185,7 @@ class ReverseMarkdown
   def insert_links
     @output << "\n"
     @links.each_index do |index|
-#      @output << "  [#{index+1}]: #{@links[index]}\n"
-      @output << "  []: #{@links[index]}\n"
+      @output << "  [#{index+1}]: #{@links[index]}\n"
     end
   end
   
@@ -262,26 +259,6 @@ sdf sdfsdf
 </blockquote>
 
 <p>nur ein text! nur eine maschine!</p>
-
-<Table>
-<TR>
-<TD>Class participation </TD>
-<TD>10% </TD>
-</TR>
-<TR>
-<TD>5 group assignments </TD>
-<TD>20% </TD>
-</TR>
-<TR>
-<TD>Mid-tern exam </TD>
-<TD>30% </TD>
-</TR>
-<TR>
-<TD>Final exam </TD>
-<TD>40% </TD>
-</TR>
-</Table>
-
 EOF
 
 r = ReverseMarkdown.new

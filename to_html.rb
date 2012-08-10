@@ -60,6 +60,7 @@ end
 str = to_markdown(File.read($input))
 r = ReverseMarkdown.new
 markdown = r.parse_string(str)
+r.print_errors   
 # str = add_line_space(to_markdown(File.read($input)))
 File.open('test.txt', 'w') do |f|
   f.puts markdown
