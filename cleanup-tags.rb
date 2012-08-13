@@ -1,3 +1,4 @@
+# usage script inputfile outputfile
 $input = ARGV[0]
 $output = ARGV[1]
 def remove_tags str
@@ -11,6 +12,8 @@ def to_markdown str
      if line =~ /<\/*table>/i
        r << line
      elsif line =~ /<\/*tr>/i
+       r << line
+     elsif line =~ /<\/*th>/i
        r << line
      elsif line =~ /<\/*td>/i
        r << line
@@ -33,6 +36,13 @@ def to_markdown str
        line = remove_tags(line)
        line = "\n\n" + line + "\n\n"
        r << line
+     elsif line =~ /<\/*sect>/i
+       line = "\n\n----\n\n"  # <hr>
+       r << line
+     elsif line =~ /<\/*figure>/i
+       line = remove_tags(line)
+       line = "\n\n" + line + "\n\n"
+       r << line
      elsif line =~ /<\/*normal>/i
        line = "\n\n" + line + "\n\n"
        line = remove_tags(line)
@@ -46,7 +56,7 @@ def to_markdown str
        line = line.sub(/^/, header)
        r << remove_tags(line)
      elsif line =~ /^<imagedata/i
-       m = line.match(/ImageData +src="([^"]+")/)
+       m = line.match(/ImageData +src="([^"]+)"/)
        img_url = m[1]
        line = '![](' + img_url + ')'
        line = "\n\n" + line + "\n\n"
