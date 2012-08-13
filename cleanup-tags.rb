@@ -36,9 +36,9 @@ def to_markdown str
        line = remove_tags(line)
        line = "\n\n" + line + "\n\n"
        r << line
-     elsif line =~ /<\/*sect>/i
-       line = "\n\n----\n\n"  # <hr>
-       r << line
+#     elsif line =~ /<\/*sect>/i
+ #      line = "\n\n----\n\n"  # <hr>
+  #     r << line
      elsif line =~ /<\/*figure>/i
        line = remove_tags(line)
        line = "\n\n" + line + "\n\n"
