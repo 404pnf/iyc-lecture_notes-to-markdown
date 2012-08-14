@@ -1,6 +1,6 @@
 
-# require 'reverse_markdown'
-require './lib/reverse_markdown'
+require 'reverse_markdown'
+#require './lib/reverse_markdown'
 
 =begin
 Usage
@@ -10,57 +10,67 @@ Usage
  3. parse a HTML string and save the return value: markdown = r.parse_string(html_string)
 =end
 
+# Example HTML Code for parsing
+example = <<-EOF
+<h2>heading 1.1</h2>
 
-$input = ARGV[0]
-def remove_tags str
-  str = str.gsub(/<[^>]+>/, '')
-end
-def to_markdown str
-  str = str.gsub(/\r/, "\n")
-  arr = str.split(/\n/).delete_if {|i| i == ''}
-  r = []
-  arr.each do |line|
-     if line =~ /<\/*table>/i
-       r << line
-     elsif line =~ /<\/*tr>/i
-       r << line
-     elsif line =~ /<\/*td>/i
-       r << line
-     elsif line =~ /<\/*p>/i
-       r << (line)
-     elsif line.match(/<h(.)>/i)
-        r << line
-     elsif line =~ /<\/*caption>/i
-       r << (line)
-     elsif line =~ /<\/*normal>/i
-       line = '<p>' + line + '</p>'
-       r << (line)
-     elsif line =~ /<\/*li_title>/i
-       line = line.sub(/<li_title>/i, '<li>')
-       line = line.sub(/<\/li_title>/i, '</li>')
-       r << (line)
-     elsif line =~ /^<imagedata/i
-       line = line.sub(/imagedata/i, 'img')
-       r << line
-     else
-     end
-  end
-  r.join("\n")
-end
-def add_line_space str
-  str.each_line do |line|
-    line = "\n\n" + line + "\n\n" # add \n first
-    if line =~ /\++ / # if list, remove the \n
-      line = line.gsub!(/\n/, '')
-    end
-  end
-  str = str.gsub(/\n\n+/, "\n\n")
-end
+<p>text *italic* and **bold**.</p>
 
-str = to_markdown(File.read($input))
-r = ReverseMarkdown.new
-markdown = r.parse_string(str)
-r.print_errors   
+<pre><code>text *italic* and **bold**.
+sdfsdff
+sdfsd
+sdf sdfsdf
+</code></pre>
+
+<blockquote>
+  <p>text <em>italic</em> and <strong>bold</strong>. sdfsdff
+  sdfsd sdf sdfsdf</p>
+</blockquote>
+
+<p>asdasd <code>sdfsdfsdf</code> asdad <a href="http://www.bla.de">link text</a></p>
+
+<p><a href="http://www.bla.de">link <strong>text</strong></a></p>
+
+<ol>
+<li>List item</li>
+<li>List <em>item</em>
+<ol><li>List item</li>
+<li>dsfdsf
+<ul><li>dfwe</li>
+<li>dsfsdfsdf</li></ul></li>
+<li>lidsf <img src="http://www.dfgdfg.de/dsf.jpe" alt="item" title="" /></li></ol></li>
+<li>sdfsdfsdf
+<ul><li>sdfsdfsdf</li>
+<li>sdfsdfsdf <strong>sdfsdf</strong></li></ul></li>
+</ol>
+
+<blockquote>
+  <p>Lorem ipsum dolor sit amet, consetetur
+  voluptua. At vero eos et accusam et
+  justo duo dolores et ea rebum. Stet
+  clita kasd gubergren, no sea takimata
+  sanctus est Lorem ipsum dolor sit
+  amet. <em>italic</em></p>
+</blockquote>
+
+<hr />
+
+<blockquote>
+  <p>Lorem ipsum dolor sit amet, consetetur
+  sadipscing elitr, sed diam nonumy
+  eirmod tempor invidunt ut labore et
+  dolore magna aliquyam erat, sed</p>
+</blockquote>
+
+<p>nur ein text! nur eine maschine!</p>
+EOF
+
+# $input = ARGV[0]
+#str = File.read($input)
+r = ReverseMarkdown
+# p markdown = r.parse_string(str)
+p markdown = r.parse_string(example)
+#r.print_errors   
 # str = add_line_space(to_markdown(File.read($input)))
 File.open('test.txt', 'w') do |f|
   f.puts markdown
