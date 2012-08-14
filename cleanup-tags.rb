@@ -5,9 +5,10 @@ def remove_tags str
   str = str.gsub(/<[^>]+>/, '')
 end
 def to_markdown str
-  str = str.gsub(/\r/, "\n")
+#  str = str.gsub(/\r/, "\n")
   arr = str.split(/\n/).delete_if {|i| i == ''}
   r = []
+  strange_lines = []
   arr.each do |line|
      if line =~ /<\/*table>/i
        r << line
@@ -51,20 +52,42 @@ def to_markdown str
        header = '+ '
        line = line.sub(/^/, header)
        r << remove_tags(line)
+     elsif line =~ /<\/*li>/i
+       header = '+ '
+       line = line.sub(/^/, header)
+       r << remove_tags(line)
+     elsif line =~ /<\/*li_label>/i
+       header = '+ '
+       line = line.sub(/^/, header)
+       r << remove_tags(line)
      elsif line =~ /<\/*lbody>/i
        header = '+ '
        line = line.sub(/^/, header)
        r << remove_tags(line)
+     elsif not line =~ /<\/*.+>/i
+       # to cover case like:
+       # <p> some words
+       # more chinese word
+       # </p>
+       r << remove_tags(line) 
+     elsif  line =~ /<\/*link>/i
+       r << remove_tags(line) 
      elsif line =~ /^<imagedata/i
        m = line.match(/ImageData +src="([^"]+)"/)
-       img_url = m[1]
-       line = '![](' + img_url + ')'
-       line = "\n\n" + line + "\n\n"
-       r << line
+       if m == nil
+         # some src="" is empty so there is no m[1] and calling m[1] throws exception
+       else
+         img_url = m[1]
+         line = '![](' + img_url + ')'
+         line = "\n\n" + line + "\n\n"
+         r << line
+       end
      else
+       strange_lines << line
      end
   end
-  r.join("\n")
+  p strange_lines       
+  return r.join("\n")
 end
 def add_line_space str
   str.each_line do |line|
@@ -77,14 +100,14 @@ def add_line_space str
 end
 def squeez_lines str
   str = str.gsub(/\A\n+/, '')
-  str = str.gsub(/\n\n+/, "\n\n")
   str = str.gsub(/\Z\n+/, '')
+  str = str.gsub(/\n\n+/, "\n\n")
 end
 #str = add_line_space(to_markdown(File.read($input)))
 str = squeez_lines(to_markdown(File.read($input)))
 File.open("#{$output}", 'w') do |f|
   f.puts str
 end
-       
+
 
   
