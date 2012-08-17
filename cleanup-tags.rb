@@ -51,7 +51,23 @@ def to_markdown str
       line = "\n\n" + line + "\n\n"
       line = remove_tags(line)
       r << line
+    elsif line =~ /<\/*heading-[0-9]>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
     elsif line =~ /<\/*inlineshape>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*shape>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*footnote-text>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*正文>/i
       line = "\n\n" + line + "\n\n"
       line = remove_tags(line)
       r << line
@@ -64,10 +80,13 @@ def to_markdown str
       line = line.sub(/^/, header)
       r << remove_tags(line)
     elsif line =~ /<\/*li_label>/i
+      line = remove_tags(line)
       header = '- '
-      line = line.sub(/^/, header)
-       r << remove_tags(line)
-     elsif line =~ /<\/*lbody>/i
+      if line.size > 3 # 如果lable是真是的lable，是一个符号并不含有文字，我们就忽略它 比如只是 * 
+        line = line.sub(/^/, header)
+        r << line
+      end
+    elsif line =~ /<\/*lbody>/i
       header = '- '
       line = line.sub(/^/, header)
       r << remove_tags(line)
@@ -121,6 +140,7 @@ end
 def squeez_lines str
   str = str.gsub(/\A\n+/, '')
   str = str.gsub(/\Z\n+/, '')
+  str = str.gsub(/^\s+$/, '')
   str = str.gsub(/\n\n+/, "\n\n")
 end
 path = $input
@@ -130,8 +150,8 @@ Find.find(path) do |file|
   filename = File.basename(file, '.xml')
   filepath = File.dirname file
   outputfilename = filename + '.md'
-  str = squeez_lines(to_markdown(File.read(file)))
-  str = remove_unwanted_lines str
+  str = remove_unwanted_lines(to_markdown(File.read(file)))
+  str = squeez_lines str
   File.open("#{filepath}/#{outputfilename}", 'w') do |f|
     f.puts str
   end
