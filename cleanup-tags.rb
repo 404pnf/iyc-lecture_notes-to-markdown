@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'find'
-# usage script inputfile outputfile
+# usage script inputfile-contains-xml
+# output .md file will be reside in the same folder
 $input = ARGV[0]
 # $output = ARGV[1]
 def remove_tags str
@@ -47,6 +48,63 @@ def to_markdown str
       line = "\n\n" + line + "\n\n"
       line = remove_tags(line)
       r << line
+    elsif line =~ /<\/*list-paragraph>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+
+    elsif line =~ /<\/*header>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*endnote-text>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*body-text-3>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*normal-indent>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*no-spacing>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*title>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*body-text>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*art>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+
+    elsif line =~ /<\/*body-text-indent>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*note>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*header-[0-9]>/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+    elsif line =~ /<\/*Normal--Web->/i
+      line = "\n\n" + line + "\n\n"
+      line = remove_tags(line)
+      r << line
+
+
+
     elsif line =~ /<\/*default>/i
       line = "\n\n" + line + "\n\n"
       line = remove_tags(line)
@@ -72,6 +130,10 @@ def to_markdown str
       line = remove_tags(line)
       r << line
     elsif line =~ /<\/*li_title>/i
+      header = '- '
+      line = line.sub(/^/, header)
+      r << remove_tags(line)
+    elsif line =~ /<\/*list-bullet>/i
       header = '- '
       line = line.sub(/^/, header)
       r << remove_tags(line)
@@ -108,6 +170,8 @@ def to_markdown str
         line = "\n\n" + line + "\n\n"
         r << line
       end
+    elsif line =~ /<\/[a-z]+:[a-z]+>/i
+      p "rdf tags?"
     else
       strange_lines << line unless line =~ /^<\/*[^>]+>\/*$/
     end
@@ -115,7 +179,7 @@ def to_markdown str
 #  strange_lines       
 #  error_msg = []
   p  strange_lines
-  File.open('error.txt', 'a') do |f|
+  File.open('error.txt', 'w') do |f|
     f.puts strange_lines
   end
   return r.join("\n")
